@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Transaction, Debt } from '../types';
 import { api } from '../lib/api';
 import { Plus, History, Calendar, FileText, TrendingDown } from 'lucide-react';
+import { formatRON } from '../utils/format-number';
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -62,7 +63,10 @@ export default function Transactions() {
     return debt ? debt.name : 'Datorie necunoscută';
   };
 
-  const totalTransactions = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalTransactions = transactions.reduce(
+    (sum, t) => sum + (t.amount ?? 0),
+    0
+  );
 
   const sortedTransactions = [...transactions].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -97,7 +101,7 @@ export default function Transactions() {
           <TrendingDown className="w-8 h-8" />
           <span className="text-lg font-medium">Total plăți efectuate</span>
         </div>
-        <div className="text-4xl font-bold">{totalTransactions.toFixed(2)} RON</div>
+        <div className="text-4xl font-bold">{formatRON(totalTransactions)}</div>
         <div className="text-sm mt-2 opacity-90">{transactions.length} tranzacții</div>
       </div>
 
@@ -128,7 +132,7 @@ export default function Transactions() {
                     </div>
                   </div>
                   <div className="text-2xl font-bold text-blue-600 sm:text-right">
-                    {transaction.amount.toFixed(2)} RON
+                    {formatRON(transaction.amount)}
                   </div>
                 </div>
               </div>
@@ -186,7 +190,7 @@ export default function Transactions() {
                   <option value="">Nicio datorie</option>
                   {debts.map((debt) => (
                     <option key={debt.id} value={debt.id}>
-                      {debt.name} - {debt.amount.toFixed(2)} RON
+                      {debt.name} - {formatRON(debt.amount)}
                     </option>
                   ))}
                 </select>

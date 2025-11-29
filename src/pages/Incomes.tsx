@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Income } from '../types';
 import { api } from '../lib/api';
 import { Plus, TrendingUp, Trash2, Calendar, RefreshCw } from 'lucide-react';
+import { formatRON } from '../utils/format-number';
 
 export default function Incomes() {
   const [incomes, setIncomes] = useState<Income[]>([]);
@@ -61,7 +62,8 @@ export default function Incomes() {
     }
   };
 
-  const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
+  const totalIncome = incomes.reduce((sum, income) => sum + (income.amount ?? 0), 0);
+
 
   if (isLoading) {
     return (
@@ -92,7 +94,7 @@ export default function Incomes() {
           <TrendingUp className="w-8 h-8" />
           <span className="text-lg font-medium">Total venituri</span>
         </div>
-        <div className="text-4xl font-bold">{totalIncome.toFixed(2)} RON</div>
+        <div className="text-4xl font-bold">{formatRON(totalIncome)}</div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -114,7 +116,7 @@ export default function Incomes() {
               </button>
             </div>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-green-600">{income.amount.toFixed(2)} RON</div>
+              <div className="text-2xl font-bold text-green-600">{formatRON(income.amount)}</div>
               {income.is_recurring === 1 && (
                 <div className="flex items-center gap-1 text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
                   <RefreshCw className="w-4 h-4" />

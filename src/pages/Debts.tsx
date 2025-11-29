@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Debt } from '../types';
 import { api } from '../lib/api';
 import { Plus, CreditCard, Trash2, Calendar, RefreshCw, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { formatRON } from '../utils/format-number';
 
 export default function Debts() {
   const [debts, setDebts] = useState<Debt[]>([]);
@@ -81,7 +82,7 @@ export default function Debts() {
     }
   };
 
-  const totalDebts = debts.reduce((sum, debt) => sum + debt.amount, 0);
+  const totalDebts = debts.reduce((sum, debt) => sum + (debt.amount ?? 0), 0);
   const pendingDebts = debts.filter(d => d.status === 'pending');
   const paidDebts = debts.filter(d => d.status === 'paid');
 
@@ -148,7 +149,7 @@ export default function Debts() {
             <CreditCard className="w-8 h-8" />
             <span className="text-lg font-medium">Total datorii</span>
           </div>
-          <div className="text-3xl font-bold">{totalDebts.toFixed(2)} RON</div>
+          <div className="text-3xl font-bold">{formatRON(totalDebts)}</div>
         </div>
         <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div className="flex items-center gap-3 mb-2">
@@ -185,7 +186,7 @@ export default function Debts() {
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
-            <div className="text-2xl font-bold text-red-600 mb-3">{debt.amount.toFixed(2)} RON</div>
+            <div className="text-2xl font-bold text-red-600 mb-3">{formatRON(debt.amount ?? 0)}</div>
             <div className="flex items-center justify-between gap-2">
               <div className={`flex items-center gap-1 px-2 py-1 rounded border text-sm ${getStatusColor(debt.status)}`}>
                 {getStatusIcon(debt.status)}

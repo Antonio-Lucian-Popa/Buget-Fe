@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Summary } from '../types';
 import { api } from '../lib/api';
 import { TrendingUp, CreditCard, Wallet, Calendar, ArrowRight } from 'lucide-react';
+import { formatRON } from '../utils/format-number';
 
 export default function Dashboard() {
   const [currentSummary, setCurrentSummary] = useState<Summary | null>(null);
@@ -82,7 +83,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-8 h-8" />
                 <span className="text-lg font-medium">Venituri Totale</span>
               </div>
-              <div className="text-4xl font-bold">{activeSummary.totalIncome.toFixed(2)} RON</div>
+              <div className="text-4xl font-bold">{formatRON(activeSummary.totalIncome)}</div>
               <div className="text-sm mt-2 opacity-90">{activeSummary.incomes.length} surse</div>
             </div>
 
@@ -91,7 +92,7 @@ export default function Dashboard() {
                 <CreditCard className="w-8 h-8" />
                 <span className="text-lg font-medium">Datorii Totale</span>
               </div>
-              <div className="text-4xl font-bold">{activeSummary.totalDebts.toFixed(2)} RON</div>
+              <div className="text-4xl font-bold">{formatRON(activeSummary.totalDebts)}</div>
               <div className="text-sm mt-2 opacity-90">{activeSummary.debts.length} datorii</div>
             </div>
 
@@ -104,7 +105,7 @@ export default function Dashboard() {
                 <Wallet className="w-8 h-8" />
                 <span className="text-lg font-medium">Disponibil</span>
               </div>
-              <div className="text-4xl font-bold">{activeSummary.remaining.toFixed(2)} RON</div>
+              <div className="text-4xl font-bold">{formatRON(activeSummary.remaining)}</div>
               <div className="text-sm mt-2 opacity-90">
                 {activeSummary.remaining >= 0 ? 'Surplus' : 'Deficit'}
               </div>
@@ -125,7 +126,7 @@ export default function Dashboard() {
                         <div className="font-semibold text-gray-900">{income.description}</div>
                         <div className="text-sm text-gray-600">{new Date(income.date).toLocaleDateString('ro-RO')}</div>
                       </div>
-                      <div className="text-lg font-bold text-green-600">{income.amount.toFixed(2)} RON</div>
+                      <div className="text-lg font-bold text-green-600">{formatRON(income.amount)}</div>
                     </div>
                   ))}
                 </div>
@@ -150,7 +151,7 @@ export default function Dashboard() {
                         </div>
                         <div className="text-xs text-gray-500 capitalize mt-1">{debt.category}</div>
                       </div>
-                      <div className="text-lg font-bold text-red-600">{debt.amount.toFixed(2)} RON</div>
+                      <div className="text-lg font-bold text-red-600">{formatRON(debt.amount)}</div>
                     </div>
                   ))}
                 </div>
@@ -169,7 +170,7 @@ export default function Dashboard() {
                 <div>
                   <h4 className="font-semibold text-orange-900">Atenție: Deficit bugetar</h4>
                   <p className="text-orange-800 text-sm mt-1">
-                    Datoriile tale depășesc veniturile cu {Math.abs(activeSummary.remaining).toFixed(2)} RON.
+                    Datoriile tale depășesc veniturile cu {formatRON(Math.abs(activeSummary.remaining))}.
                     Ia în considerare reducerea cheltuielilor sau creșterea veniturilor.
                   </p>
                 </div>
