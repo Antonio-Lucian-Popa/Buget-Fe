@@ -1,121 +1,140 @@
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import {
-  LayoutDashboard,
-  TrendingUp,
-  CreditCard,
-  History,
-  LogOut,
-  Menu,
-  X
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 interface LayoutProps {
-  children: ReactNode;
-  currentView: string;
-  onNavigate: (view: string) => void;
+  children: React.ReactNode;
 }
 
-export default function Layout({ children, currentView, onNavigate }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'incomes', label: 'Venituri', icon: TrendingUp },
-    { id: 'debts', label: 'Datorii', icon: CreditCard },
-    { id: 'transactions', label: 'Istoric', icon: History },
-  ];
+  const linkBase =
+    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition';
+  const linkInactive = 'text-gray-600 hover:bg-gray-100';
+  const linkActive =
+    'bg-blue-50 text-blue-700 border-b-2 border-blue-600';
+
+  const navLinks = (
+    <>
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+          `${linkBase} ${isActive ? linkActive : linkInactive}`
+        }
+        onClick={() => setIsMobileOpen(false)}
+      >
+        Dashboard
+      </NavLink>
+      <NavLink
+        to="/incomes"
+        className={({ isActive }) =>
+          `${linkBase} ${isActive ? linkActive : linkInactive}`
+        }
+        onClick={() => setIsMobileOpen(false)}
+      >
+        Venituri
+      </NavLink>
+      <NavLink
+        to="/debts"
+        className={({ isActive }) =>
+          `${linkBase} ${isActive ? linkActive : linkInactive}`
+        }
+        onClick={() => setIsMobileOpen(false)}
+      >
+        Datorii
+      </NavLink>
+      <NavLink
+        to="/transactions"
+        className={({ isActive }) =>
+          `${linkBase} ${isActive ? linkActive : linkInactive}`
+        }
+        onClick={() => setIsMobileOpen(false)}
+      >
+        Istoric
+      </NavLink>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+      {/* Navbar */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-bold">
+              B
+            </div>
+            <span className="font-semibold text-gray-900 text-sm sm:text-base">
+              Budget Manager
+            </span>
+          </div>
+
+          {/* Desktop nav + user */}
+          <div className="hidden md:flex items-center gap-4">
+            <nav className="flex items-center gap-2">
+              {navLinks}
+            </nav>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">Budget Manager</h1>
-            </div>
-
-            <div className="hidden md:flex items-center gap-2">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onNavigate(item.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-                      currentView === item.id
-                        ? 'bg-blue-50 text-blue-600 font-semibold'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center gap-4">
-              <span className="hidden sm:block text-sm text-gray-600">{user?.email}</span>
+              {user && (
+                <span className="text-sm text-gray-600">
+                  {user.email}
+                </span>
+              )}
               <button
                 onClick={logout}
-                className="hidden md:flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                className="text-sm text-red-600 hover:text-red-700 font-medium"
               >
-                <LogOut className="w-5 h-5" />
-                <span>Ieșire</span>
-              </button>
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                Ieșire
               </button>
             </div>
           </div>
+
+          {/* Mobile: user + burger */}
+          <div className="flex items-center gap-2 md:hidden">
+            {user && (
+              <span className="text-xs text-gray-600 max-w-[120px] truncate text-right">
+                {user.email}
+              </span>
+            )}
+            <button
+              onClick={() => setIsMobileOpen((prev) => !prev)}
+              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition"
+              aria-label="Deschide meniul"
+            >
+              {isMobileOpen ? (
+                <X className="w-5 h-5 text-gray-700" />
+              ) : (
+                <Menu className="w-5 h-5 text-gray-700" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {isMobileMenuOpen && (
+        {/* Mobile menu */}
+        {isMobileOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-2 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      onNavigate(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                      currentView === item.id
-                        ? 'bg-blue-50 text-blue-600 font-semibold'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
+            <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2">
+              <nav className="flex flex-col gap-1">{navLinks}</nav>
               <button
-                onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition"
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  logout();
+                }}
+                className="mt-2 w-full text-left text-sm text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg font-medium"
               >
-                <LogOut className="w-5 h-5" />
-                <span>Ieșire</span>
+                Ieșire
               </button>
             </div>
           </div>
         )}
-      </nav>
+      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      {/* Content */}
+      <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
     </div>
   );
 }
